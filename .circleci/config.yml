@@ -80,7 +80,10 @@ commands:
 #########
 
 jobs:
-
+  test_application:
+    executor: awscli
+    steps: 
+      - noop
   terraform_plan:
     executor: terraform
     steps:
@@ -143,12 +146,14 @@ workflows:
             - terraform_apply
             - prepare_docker_image
 
-      
+      - test_application:
+           requires: 
+             - deploy_application
       
       - terraform_destroy_approve:
           type: approval
           requires:
-            - deploy_application          
+            - test_application         
 
 
       - terraform_destroy:
