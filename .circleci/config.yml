@@ -25,7 +25,7 @@ commands:
           name: terraform init and plan
           working_directory: ./terraform
           command: |
-            cd terraform ; terraform init && terraform plan
+            terraform init && terraform plan
   deploy_ec2:
     steps:
       - run:
@@ -62,6 +62,7 @@ jobs:
   deploy_infrastructure:
     executor: terraform
     steps:
+      - checkout
       - terraform_plan
 
   deploy_application:
