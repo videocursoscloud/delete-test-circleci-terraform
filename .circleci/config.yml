@@ -6,8 +6,6 @@ executors:
   awscli:
     docker:
       - image: amazon/aws-cli
-  
-  
 
 commands:
   deploy_ec2:
@@ -22,7 +20,7 @@ commands:
       - run:
           name: docker login
           command: |
-            docker login
+            docker login --username ${DOCKER_HUB_USERNAME} --password ${DOCKER_HUB_PASSWORD}
   build_image:
     steps:
       - run:
