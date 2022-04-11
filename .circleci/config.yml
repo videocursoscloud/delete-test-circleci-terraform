@@ -18,12 +18,12 @@ commands:
             aws sts get-caller-identity
                      
 
-  docker_ps:
+  build_image:
     steps:
       - run:
-          name: docker ps
+          name: docker build
           command: |
-            docker ps
+            docker build -t minginx:latest .
                      
 
 #########
@@ -41,7 +41,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - docker_ps
+      - build_image
 
       
       
@@ -55,6 +55,7 @@ workflows:
     jobs:
       - prepare_docker_image
       - deploy_application:
+          type: approval
           context: aws-access
       
      
