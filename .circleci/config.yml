@@ -3,9 +3,6 @@ version: 2.1
 ### Executors
 #########
 executors:
-  python:
-    docker:
-      - image: circleci/python
   awscli:
     docker:
       - image: amazon/aws-cli
@@ -21,22 +18,28 @@ commands:
             aws sts get-caller-identity
                      
 
+  docker_ps:
+    steps:
+      - run:
+          name: docker ps
+          command: |
+            docker ps
+                     
+
 #########
 ### jobs
 #########
 
 jobs:
-  say-hello:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
   deploy_application:
     executor: awscli
     steps:
       - deploy_ec2
+  prepare_docker_image:
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - docker_ps
 
       
       
@@ -48,6 +51,7 @@ jobs:
 workflows:
   "deploy_and_delete":
     jobs:
+      - prepare_docker_image
       - deploy_application:
           context: aws-access
       
