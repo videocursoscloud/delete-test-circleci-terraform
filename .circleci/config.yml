@@ -61,7 +61,9 @@ jobs:
 workflows:
   say-hello-workflow:
     jobs:
-      - say-hello
-      - sts-get-identity
+      - say-hello:
+          context: aws-access
+      - sts-get-identity:
+          context: aws-access
       
      
