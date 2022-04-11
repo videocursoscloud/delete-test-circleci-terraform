@@ -141,6 +141,7 @@ workflows:
           context: aws-access  
           requires:
             - terraform_apply
+            - prepare_docker_image
 
       
       
