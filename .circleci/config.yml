@@ -125,14 +125,22 @@ workflows:
       - terraform_plan:
           context: aws-access
 
-      - terraform_apply:
+      - terraform_apply_approve:
           type: approval
           requires:
             - terraform_plan
+      - terraform_apply:
           context: aws-access
+          requires:
+            - terraform_apply_approve
 
-      - terraform_destroy:
+      - terraform_destroy_approve:
           type: approval
           requires:
             - terraform_apply          
+
+
+      - terraform_destroy:
+          requires:
+            - terraform_destroy_approve  
           context: aws-access
