@@ -13,24 +13,12 @@ executors:
   
 
 commands:
-  sts-get-identity:
+  deploy_ec2:
     steps:
       - run:
           name: sts get caller identity
           command: |
             aws sts get-caller-identity
-  get-env:
-    steps:
-      - run:
-          name: get env
-          command: |
-              env
-  list-keypairs:
-    steps:
-      - run:
-          name: list keypairs
-          command: |
-            aws ec2 describe-key-pairs
                      
 
 #########
@@ -45,12 +33,11 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World!"
-  sts-get-identity:
+  deploy_application:
     executor: awscli
     steps:
-      - sts-get-identity
-      - get-env
-      - list-keypairs
+      - deploy_ec2
+
       
       
 
@@ -59,11 +46,9 @@ jobs:
 ### Workflows
 #########
 workflows:
-  say-hello-workflow:
+  "deploy_and_delete":
     jobs:
-      - say-hello:
-          context: aws-access
-      - sts-get-identity:
+      - deploy_application:
           context: aws-access
       
      
