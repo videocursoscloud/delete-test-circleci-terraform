@@ -1,0 +1,67 @@
+version: 2.1
+#########
+### Executors
+#########
+executors:
+  python:
+    docker:
+      - image: circleci/python
+  awscli:
+    docker:
+      - image: amazon/aws-cli
+  
+  
+
+commands:
+  sts-get-identity:
+    steps:
+      - run:
+          name: sts get caller identity
+          command: |
+            aws sts get-caller-identity
+  get-env:
+    steps:
+      - run:
+          name: get env
+          command: |
+              env
+  list-keypairs:
+    steps:
+      - run:
+          name: list keypairs
+          command: |
+            aws ec2 describe-key-pairs
+                     
+
+#########
+### jobs
+#########
+
+jobs:
+  say-hello:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: "Say hello"
+          command: "echo Hello, World!"
+  sts-get-identity:
+    executor: awscli
+    steps:
+      - sts-get-identity
+      - get-env
+      - list-keypairs
+      
+      
+
+          
+#########
+### Workflows
+#########
+workflows:
+  say-hello-workflow:
+    jobs:
+      - say-hello
+      - sts-get-identity
+      
+     
