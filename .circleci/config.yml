@@ -24,7 +24,7 @@ commands:
       - run:
           name: noop
           command: |
-            - echo "noop"
+            echo "noop"
   terraform_plan:
     steps:
       - run:
