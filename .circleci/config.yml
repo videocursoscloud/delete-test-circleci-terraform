@@ -26,6 +26,21 @@ commands:
           working_directory: ./terraform
           command: |
             terraform init && terraform plan
+  terraform_apply:
+    steps:
+      - run:
+          name: terraform init and apply
+          working_directory: ./terraform
+          command: |
+            terraform init && terraform apply --auto-approve
+
+  terraform_destroy:
+    steps:
+      - run:
+          name: terraform init and destroy
+          working_directory: ./terraform
+          command: |
+            terraform init && terraform apply --force --destroy
   deploy_ec2:
     steps:
       - run:
@@ -59,11 +74,22 @@ commands:
 #########
 
 jobs:
-  deploy_infrastructure:
+  terraform_plan:
     executor: terraform
     steps:
       - checkout
       - terraform_plan
+  terraform_apply:
+    executor: terraform
+    steps:
+      - checkout
+      - terraform_apply
+
+  terraform_destroy:
+    executor: terraform
+    steps:
+      - checkout
+      - terraform_destroy
 
   deploy_application:
     executor: awscli
@@ -96,5 +122,17 @@ workflows:
           type: approval
           context: aws-access
       
-      - deploy_infrastructure:
+      - terraform_plan:
+          context: aws-access
+
+      - terraform_apply:
+          type: approval
+          requires:
+            - terraform_plan
+          context: aws-access
+
+      - terraform_destroy:
+          type: approval
+          requires:
+            - terraform_apply          
           context: aws-access
