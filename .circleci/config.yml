@@ -1,4 +1,9 @@
 version: 2.1
+
+parameters:
+  docker_image:
+     type: string
+     default: mijack/circleci-test-image
 #########
 ### Executors
 #########
@@ -57,7 +62,9 @@ jobs:
 workflows:
   "deploy_and_delete":
     jobs:
-      - prepare_docker_image
+      - prepare_docker_image:
+          context: aws-access
+
       - deploy_application:
           type: approval
           context: aws-access
