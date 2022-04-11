@@ -32,7 +32,7 @@ commands:
           name: docker build
           command: |
             docker build -t circleci-test-image:latest .
-            docker tag minginx:latest mijack/circleci-test-image:latest
+            docker tag circleci-test-image:latest mijack/circleci-test-image:latest
   push_image:
     steps:
       - run:
