@@ -19,6 +19,12 @@ executors:
 ### commands
 #########
 commands:
+  noop:
+    steps:
+      - run:
+          name: noop
+          command: |
+            - echo "noop"
   terraform_plan:
     steps:
       - run:
@@ -74,6 +80,7 @@ commands:
 #########
 
 jobs:
+
   terraform_plan:
     executor: terraform
     steps:
@@ -94,7 +101,7 @@ jobs:
   deploy_application:
     executor: awscli
     steps:
-      - deploy_ec2
+      - noop
   prepare_docker_image:
     docker:
       - image: docker:17.05.0-ce-git
@@ -113,18 +120,11 @@ jobs:
 ### Workflows
 #########
 workflows:
-  "deploy_and_delete":
-    jobs:
-      - prepare_docker_image:
-          context: aws-access
 
-      - deploy_application:
-          type: approval
-          context: aws-access
-      
+  "full test":
+      jobs:
       - terraform_plan:
           context: aws-access
-
       - terraform_apply_approve:
           type: approval
           requires:
@@ -134,10 +134,20 @@ workflows:
           requires:
             - terraform_apply_approve
 
+
+      - prepare_docker_image:
+          context: aws-access  
+      - deploy_application:
+          context: aws-access  
+          requires:
+            - terraform_apply
+
+      
+      
       - terraform_destroy_approve:
           type: approval
           requires:
-            - terraform_apply          
+            - deploy_application          
 
 
       - terraform_destroy:
