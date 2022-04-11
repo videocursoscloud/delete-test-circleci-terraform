@@ -17,7 +17,12 @@ commands:
           command: |
             aws sts get-caller-identity
                      
-
+  docker_login:
+    steps:
+      - run:
+          name: docker login
+          command: |
+            docker login
   build_image:
     steps:
       - run:
@@ -41,6 +46,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - docker_login
       - build_image
 
       
