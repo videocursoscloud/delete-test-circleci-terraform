@@ -8,11 +8,24 @@ parameters:
 ### Executors
 #########
 executors:
+  terraform:
+    docker:
+      - image: hashicorp/terraform:1.1.8
+
   awscli:
     docker:
       - image: amazon/aws-cli
-
+#########
+### commands
+#########
 commands:
+  terraform_plan:
+    steps:
+      - run:
+          name: terraform init and plan
+          working_directory: ./terraform
+          command: |
+            terraform init && terraform plan
   deploy_ec2:
     steps:
       - run:
@@ -46,6 +59,11 @@ commands:
 #########
 
 jobs:
+  deploy_infrastructure:
+    executor: terraform
+    steps:
+      - terraform_plan
+
   deploy_application:
     executor: awscli
     steps:
@@ -77,4 +95,5 @@ workflows:
           type: approval
           context: aws-access
       
-     
+      - deploy_infrastructure:
+          context: aws-access
