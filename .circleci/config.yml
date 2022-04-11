@@ -46,7 +46,7 @@ commands:
           name: terraform init and destroy
           working_directory: ./terraform
           command: |
-            terraform init && terraform apply --force --destroy
+            terraform init && terraform apply -destroy --auto-approve
   deploy_ec2:
     steps:
       - run:
