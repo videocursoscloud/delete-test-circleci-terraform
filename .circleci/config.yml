@@ -21,14 +21,10 @@ workflows:
 
   deploy_infrastructure_prod:
     jobs:
-      - terraform_apply_approval:
-          type: approval
       - terraform/fmt:
           checkout: true
           context: aws-access-prod
           path: terraform/
-          requires:
-            - terraform_apply_approval
       - terraform/validate:
           checkout: true
           context: aws-access-prod
@@ -41,6 +37,8 @@ workflows:
           persist-workspace: true
           requires:
             - terraform/validate
+      - terraform_apply_approval:
+          type: approval
       - terraform/apply:
           attach-workspace: true
           context: aws-access-prod
@@ -49,7 +47,7 @@ workflows:
             branches:
               only: main
           requires:
-            - terraform/plan
+            - terraform_apply_approval
   undeploy_infrastructure_staging:
     jobs:
       - terraform_destroy_approval:
@@ -63,8 +61,6 @@ workflows:
 
   deploy_infrastructure_staging:
     jobs:
-      - terraform_apply_approval:
-          type: approval
       - terraform/fmt:
           checkout: true
           context: aws-access-staging
@@ -83,6 +79,8 @@ workflows:
           persist-workspace: true
           requires:
             - terraform/validate
+      - terraform_apply_approval:
+          type: approval
       - terraform/apply:
           attach-workspace: true
           context: aws-access-staging
@@ -91,4 +89,4 @@ workflows:
             branches:
               only: main
           requires:
-            - terraform/plan
+            - terraform_apply_approval
