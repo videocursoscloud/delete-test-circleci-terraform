@@ -39,6 +39,8 @@ workflows:
             - terraform/validate
       - terraform_apply_approval:
           type: approval
+          requires:
+            - terraform/plan
       - terraform/apply:
           attach-workspace: true
           context: aws-access-prod
@@ -81,6 +83,8 @@ workflows:
             - terraform/validate
       - terraform_apply_approval:
           type: approval
+          requires:
+            - terraform/plan
       - terraform/apply:
           attach-workspace: true
           context: aws-access-staging
