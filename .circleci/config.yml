@@ -8,6 +8,19 @@ parameters:
      default: mijack/circleci-test-image
 
 workflows:
+  undeploy_infrastructure:
+    jobs:
+      - terraform_destroy_approval:
+          type: approval
+          requires:
+            - terraform_plan
+      - terraform/destroy:
+          checkout: true
+          context: aws-access
+          path: terraform/
+          requires:
+            - terraform_destroy_approval
+
   deploy_infrastructure:
     jobs:
       - terraform/fmt:
