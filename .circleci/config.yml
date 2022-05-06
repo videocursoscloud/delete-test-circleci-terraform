@@ -8,42 +8,42 @@ parameters:
      default: mijack/circleci-test-image
 
 workflows:
-  undeploy_infrastructure:
+  undeploy_infrastructure_prod:
     jobs:
       - terraform_destroy_approval:
           type: approval
       - terraform/destroy:
           checkout: true
-          context: aws-access
+          context: aws-access-prod
           path: terraform/
           requires:
             - terraform_destroy_approval
 
-  deploy_infrastructure:
+  deploy_infrastructure_prod:
     jobs:
       - terraform_apply_approval:
           type: approval
       - terraform/fmt:
           checkout: true
-          context: aws-access
+          context: aws-access-prod
           path: terraform/
           requires:
             - terraform_apply_approval
       - terraform/validate:
           checkout: true
-          context: aws-access
+          context: aws-access-prod
           requires:
             - terraform/fmt
       - terraform/plan:
           checkout: true
-          context: aws-access
+          context: aws-access-prod
           path: terraform/
           persist-workspace: true
           requires:
             - terraform/validate
       - terraform/apply:
           attach-workspace: true
-          context: aws-access
+          context: aws-access-prod
           path: terraform/
           filters:
             branches:
