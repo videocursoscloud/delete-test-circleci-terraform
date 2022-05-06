@@ -50,3 +50,45 @@ workflows:
               only: main
           requires:
             - terraform/plan
+  undeploy_infrastructure_staging:
+    jobs:
+      - terraform_destroy_approval:
+          type: approval
+      - terraform/destroy:
+          checkout: true
+          context: aws-access-staging
+          path: terraform/
+          requires:
+            - terraform_destroy_approval
+
+  deploy_infrastructure_staging:
+    jobs:
+      - terraform_apply_approval:
+          type: approval
+      - terraform/fmt:
+          checkout: true
+          context: aws-access-staging
+          path: terraform/
+          requires:
+            - terraform_apply_approval
+      - terraform/validate:
+          checkout: true
+          context: aws-access-staging
+          requires:
+            - terraform/fmt
+      - terraform/plan:
+          checkout: true
+          context: aws-access-staging
+          path: terraform/
+          persist-workspace: true
+          requires:
+            - terraform/validate
+      - terraform/apply:
+          attach-workspace: true
+          context: aws-access-staging
+          path: terraform/
+          filters:
+            branches:
+              only: main
+          requires:
+            - terraform/plan
