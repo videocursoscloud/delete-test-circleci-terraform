@@ -67,8 +67,6 @@ workflows:
           checkout: true
           context: aws-access-staging
           path: terraform/
-          requires:
-            - terraform_apply_approval
       - terraform/validate:
           checkout: true
           context: aws-access-staging
