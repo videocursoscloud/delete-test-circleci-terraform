@@ -12,8 +12,6 @@ workflows:
     jobs:
       - terraform_destroy_approval:
           type: approval
-          requires:
-            - terraform_plan
       - terraform/destroy:
           checkout: true
           context: aws-access
@@ -23,10 +21,14 @@ workflows:
 
   deploy_infrastructure:
     jobs:
+      - terraform_apply_approval:
+          type: approval
       - terraform/fmt:
           checkout: true
           context: aws-access
           path: terraform/
+          requires:
+            - terraform_apply_approval
       - terraform/validate:
           checkout: true
           context: aws-access
