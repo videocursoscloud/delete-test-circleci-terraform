@@ -14,3 +14,14 @@ workflows:
           checkout: true
           context: aws-access
           path: terraform/
+      - terraform/validate:
+          checkout: true
+          context: aws-access
+          requires:
+            - terraform/fmt
+      - terraform/plan:
+          checkout: true
+          context: aws-access
+          persist-workspace: true
+          requires:
+            - terraform/validate
