@@ -49,7 +49,7 @@ TASK_DEFINITION
 
 
 resource "aws_ecs_service" "test" {
-  name            = "${var.environment_name}"
+  name            = var.environment_name
   cluster         = aws_ecs_cluster.test.id
   task_definition = aws_ecs_task_definition.test.arn
   desired_count   = 1
@@ -73,7 +73,7 @@ resource "aws_ecs_service" "test" {
 }
 
 resource "aws_lb_target_group" "tg" {
-  name        = "${var.environment_name}"
+  name        = var.environment_name
   port        = 80
   protocol    = "HTTP"
   vpc_id      = data.aws_vpc.default.id
@@ -93,7 +93,7 @@ resource "aws_lb_listener" "listener80" {
 
 
 resource "aws_lb" "alb" {
-  name                       = "${var.environment_name}"
+  name                       = var.environment_name
   internal                   = false
   load_balancer_type         = "application"
   security_groups            = [aws_security_group.allow_all.id]
