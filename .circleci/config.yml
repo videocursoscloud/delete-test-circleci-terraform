@@ -79,10 +79,7 @@ workflows:
           persist-workspace: true
           requires:
             - terraform/validate
-      - terraform_apply_approval:
-          type: approval
-          requires:
-            - terraform/plan
+
       - terraform/apply:
           attach-workspace: true
           context: aws-access-staging
@@ -91,4 +88,4 @@ workflows:
             branches:
               only: main
           requires:
-            - terraform_apply_approval
+            - terraform/plan
